@@ -41,6 +41,8 @@ class Carousel {
     }
 
     hideAll() {
+        /* to provide supporting in all browsers where forEach does't work for collection*/
+        this.slides.forEach = [].forEach;
         this.slides.forEach(function (item) {
             item.classList.add("hidden");
         });
