@@ -1,17 +1,18 @@
+"use strict";
+
 class Carousel {
 
     constructor(selector, obj) {
         this.slides = document.querySelectorAll(selector + " .carousel-item");
-        console.log(this.slides);
         this.currentPosition = 0;
         this.carouselObj = {
             duration: 3000,
-            direction: "left",
+            direction: "right",
             transitionSec: 2
         };
         this.numberSlides = Object.keys(this.slides).length;
 
-        for (key in obj) {
+        for (var key in obj) {
             if (key in this.carouselObj) {
                 this.carouselObj[key] = obj[key];
             }
@@ -20,54 +21,59 @@ class Carousel {
 
     start() {
         this.timer = setInterval(()=> {
+            console.log(this.currentPosition === this.numberSlides - 1);
             switch (this.carouselObj.direction) {
-                case "left":
-                    this.moveToRight();
-                    break;
                 case "right":
+                    console.log("right");
+                    this.moveToRight();
+                    if (this.currentPosition === this.numberSlides - 1) {
+                        this.carouselObj.direction = "left";
+                    }
+                    break;
+                case "left":
+                    console.log("left");
                     this.moveToLeft();
+                    if (this.currentPosition === 0) {
+                        this.carouselObj.direction = "right";
+                    }
                     break;
             }
         }, this.carouselObj.duration);
-        // switch (this.carouselObj.direction) {
-        //     case "left":
-        //         this.moveToLeft();
-        //         break;
-        // }
     }
 
     moveToRight() {
         this.currentPosition = (this.currentPosition + 1) % this.numberSlides;
-       // this.newSlide();
-        this.scrollRight();
-    }
-    //
-    // newSlide() {
-    //     this.hideAll();
-    //     this.slides[this.currentPosition].classList.remove("hidden");
-    // }
-    //
-    // hideAll() {
-    //     /* to provide supporting in all browsers where forEach does't work for collection*/
-    //     this.slides.forEach = [].forEach;
-    //     this.slides.forEach(function (item) {
-    //         item.classList.add("hidden");
-    //     });
-    // }
-
-    scrollRight() {
-        // let item = this.slides[this.currentPosition];
-        let preventItem = this.slides[this.currentPosition - 1]; // ?????
-        //   item.style.transition = "2s all";
-        preventItem.style.transition = this.carouselObj.transitionSec + "s all";
-        preventItem.style.marginLeft = -100 + "%";
+        this.scroll();
     }
 
-    scrollLeft() {
-        let preventItem = this.slides[this.currentPosition + 1];
-        preventItem.style.transition = this.carouselObj.transitionSec + "s all";
-        preventItem.style.marginLeft = 100 + "%";
+    moveToLeft() {
+        this.currentPosition = (this.currentPosition - 1) % this.numberSlides;
+        this.scroll();
     }
+
+    scroll() {
+        for (let i = 0; i < this.numberSlides; i++) {
+            let preventItem = this.slides[i];
+            preventItem.style.transition = this.carouselObj.transitionSec + "s all";
+            preventItem.style.transform = `translateX(-${(100*this.currentPosition)}%)`;
+            preventItem.style.mozTransform = `translateX(-${(100*this.currentPosition)}%)`;
+            preventItem.style.webKitTransform = `translateX(-${(100*this.currentPosition)}%)`;
+            preventItem.style.msTransform = `translateX(-${(100*this.currentPosition)}%)`;
+        }
+    }
+    //
+    // scrollLeft() {
+    //
+    //     for (let i = 0; i < this.numberSlides; i++) {
+    //         let preventItem = this.slides[i];
+    //         preventItem.style.transition = this.carouselObj.transitionSec + "s all";
+    //         preventItem.style.transform = `translateX(-${(100*this.currentPosition)}%)`;
+    //         preventItem.style.mozTransform = `translateX(-${(100*this.currentPosition)}%)`;
+    //         preventItem.style.webKitTransform = `translateX(-${(100*this.currentPosition)}%)`;
+    //         preventItem.style.msTransform = `translateX(-${(100*this.currentPosition)}%)`;
+    //     }
+    //
+    // }
 
     /* Indicators */
 
